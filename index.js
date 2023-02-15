@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const { start } = require('repl');
 
 const db = mysql.createConnection(
     {
@@ -23,6 +24,7 @@ function viewAllDepartments() {
                 throw err;
             }
             console.table(result);
+            optionsList();
         });
     });
 }
@@ -39,6 +41,7 @@ function viewAllRoles() {
                 throw err;
             }
             console.table(result);
+            optionsList();
         });
     })
 }
@@ -60,6 +63,7 @@ function viewAllEmployees() {
                 throw err;
             }
             console.table(result);
+            optionsList();
         });
     });
 }
@@ -91,6 +95,7 @@ function addDepartment() {
                     }
 
                     console.log(`Successfully added ${answers.name} department to the database.`);
+                    optionsList();
                 })
             })
         })
@@ -137,6 +142,7 @@ function addRole() {
                     }
 
                     console.log(`Successfully added ${answers.title} role to the database.`);
+                    optionsList();
                 })
             })
         })
@@ -196,6 +202,7 @@ function addEmployee() {
                             throw err;
                         }
                         console.log(`Successfully added ${answers.first_name} ${answers.last_name} to the database.`);
+                        optionsList();
                     })
                 })
             })
@@ -203,4 +210,51 @@ function addEmployee() {
     })
 }
 
-viewAllRoles();
+function optionsList() {
+    inquirer.prompt([
+    {
+        type: 'list',
+        name: 'choice',
+        message: 'What would you like to do',
+        choices: [
+            'View All Employees',
+            'Add Employee',
+            'View Roles',
+            'Add Role',
+            'View All Departments',
+            'Add Departments',
+            'Quit',
+        ]
+    }]).then((answers) => {
+        switch (answers.choice) {
+            case 'View All Employees':
+                viewAllEmployees();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'View Roles':
+                viewAllRoles();
+                break;
+            case 'Add Role':
+                addRole();
+                break;
+            case 'View All Departments':
+                viewAllDepartments();
+                break;
+            case 'Add Departments':
+                addDepartment();
+                break;
+            default:
+                console.log('Exiting app');
+                break;
+        }
+    });
+}
+
+function startEmployeeTracker() {
+    console.log("Starting Employee Tracker");
+    optionsList();
+}
+
+startEmployeeTracker();
